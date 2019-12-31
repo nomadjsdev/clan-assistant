@@ -3,17 +3,17 @@ import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 
-import { loginUser } from 'Store/Feature/auth'
+import { resetPassword } from 'Store/Feature/auth'
 
-const Login = () => {
+const PasswordReset = () => {
 	const dispatch = useDispatch()
-	const loginError = useSelector(state => state.auth.loginError)
+	const resetError = useSelector(state => state.auth.resetError)
 
 	return (
 		<>
-			<h1>Login</h1>
+			<h1>PasswordReset</h1>
 			<Formik
-				initialValues={{ email: '', password: '' }}
+				initialValues={{ email: '' }}
 				validate={values => {
 					const errors = {}
 					if (!values.email) {
@@ -21,13 +21,10 @@ const Login = () => {
 					} else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
 						errors.email = 'Invalid email address'
 					}
-					if (!values.password) {
-						errors.password = 'Required'
-					}
 					return errors
 				}}
 				onSubmit={values => {
-					dispatch(loginUser(values.email, values.password))
+					dispatch(resetPassword(values.email))
 				}}
 			>
 				{({ isSubmitting }) => (
@@ -35,19 +32,16 @@ const Login = () => {
 						<label htmlFor="email">Email</label>
 						<Field type="email" name="email" />
 						<ErrorMessage name="email" component="div" />
-						<label htmlFor="password">Password</label>
-						<Field type="password" name="password" />
-						<ErrorMessage name="password" component="div" />
 						<button type="submit" disabled={isSubmitting}>
-							Login
+							Reset
 						</button>
 					</Form>
 				)}
 			</Formik>
 			<div>
-				{loginError && (
+				{resetError && (
 					<>
-						<p>{loginError}</p>
+						<p>{resetError}</p>
 					</>
 				)}
 			</div>
@@ -55,10 +49,10 @@ const Login = () => {
 				Don&apos;t have an account? <Link to="/register">Register here.</Link>
 			</p>
 			<p>
-				Forgot your password? <Link to="/passwordreset">Reset it here.</Link>
+				Know your password? <Link to="/login">Login here.</Link>
 			</p>
 		</>
 	)
 }
 
-export default Login
+export default PasswordReset
