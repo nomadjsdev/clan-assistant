@@ -1,8 +1,6 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import { Provider } from 'react-redux'
-
-import createStore from 'Store/createStore'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 import Home from 'View/Home'
 import Register from 'View/Register'
@@ -11,28 +9,55 @@ import Login from 'View/Login'
 
 import Navbar from 'Component/Navbar'
 
-const store = createStore()
-
 const App = () => {
+	const { isLoggingIn, isLoggingOut, isVerifying, isAuthenticated } = useSelector(state => state.auth)
+	const { isCreating, isLoading } = useSelector(state => state.user)
+
+	if (isLoggingIn) {
+		return (
+			<>
+				<h1>Logging in</h1>
+			</>
+		)
+	}
+	if (isLoggingOut) {
+		return (
+			<>
+				<h1>Logging out</h1>
+			</>
+		)
+	}
+	if (isVerifying) {
+		return (
+			<>
+				<h1>Verifying</h1>
+			</>
+		)
+	}
+	if (isCreating) {
+		return (
+			<>
+				<h1>Creating user</h1>
+			</>
+		)
+	}
+	if (isLoading) {
+		return (
+			<>
+				<h1>Loading</h1>
+			</>
+		)
+	}
+
 	return (
 		<Router>
-			<Provider store={store}>
-				<Navbar />
-				<Switch>
-					<Route path="/register">
-						<Register />
-					</Route>
-					<Route path="/passwordreset">
-						<PasswordReset />
-					</Route>
-					<Route path="/login">
-						<Login />
-					</Route>
-					<Route path="/">
-						<Home />
-					</Route>
-				</Switch>
-			</Provider>
+			<Navbar />
+			<Switch>
+				<Route path="/register">{isAuthenticated ? <Redirect to="/" /> : <Register />}</Route>
+				<Route path="/passwordreset">{isAuthenticated ? <Redirect to="/" /> : <PasswordReset />}</Route>
+				<Route path="/login">{isAuthenticated ? <Redirect to="/" /> : <Login />}</Route>
+				<Route path="/">{isAuthenticated ? <Redirect to="/dashboard" /> : <Home />}</Route>
+			</Switch>
 		</Router>
 	)
 }

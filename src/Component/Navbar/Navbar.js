@@ -1,35 +1,40 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { NavLink } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
 
 import { logoutUser } from 'Store/Feature/auth'
 
-// TODO: Auth / non-auth navbar
-
 const Navbar = () => {
-	const dispatch = useDispatch()
+	const isAuthenticated = useSelector(state => state.auth.isAuthenticated)
 
 	return (
 		<>
-			<p>
-				<Link to="/">Home</Link>
-			</p>
-			<p>
-				<Link to="/register">Register</Link>
-			</p>
-			<p>
-				<Link to="/login">Login</Link>
-			</p>
-			<p>
-				<button
-					type="button"
-					onClick={() => {
-						dispatch(logoutUser())
-					}}
-				>
-					Logout
-				</button>
-			</p>
+			<NavLink to="/">Home</NavLink> | {isAuthenticated ? <NavbarAuth /> : <NavbarDefault />}
+		</>
+	)
+}
+
+const NavbarDefault = () => (
+	<>
+		<NavLink to="/register">Register</NavLink> | <NavLink to="/login">Login</NavLink>
+	</>
+)
+
+const NavbarAuth = () => {
+	const dispatch = useDispatch()
+	const details = useSelector(state => state.user.details)
+
+	return (
+		<>
+			<button
+				type="button"
+				onClick={() => {
+					dispatch(logoutUser())
+				}}
+			>
+				Logout
+			</button>
+			<span>{details.email}</span>
 		</>
 	)
 }

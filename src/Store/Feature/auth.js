@@ -18,6 +18,8 @@ import {
 	resetError,
 } from 'Store/Slice/auth'
 
+import { createUser, fetchUser, clearUser } from 'Store/Feature/user'
+
 export const registerUser = (email, password) => dispatch => {
 	dispatch(requestRegister())
 
@@ -26,12 +28,11 @@ export const registerUser = (email, password) => dispatch => {
 		.createUserWithEmailAndPassword(email, password)
 		.then(response => {
 			dispatch(receiveRegister())
-			// return response
+			return response
 		})
-		// TODO: create user
-		// .then(userObj => {
-		// dispatch(createUser(userObj.user.uid, userObj.user.email))
-		// })
+		.then(userObj => {
+			dispatch(createUser(userObj.user.uid, userObj.user.email))
+		})
 		.catch(error => {
 			console.log(error)
 			dispatch(registerError(error.message))
@@ -50,13 +51,11 @@ export const verifyAuth = () => dispatch => {
 		if (user !== null) {
 			dispatch(receiveLogin(user))
 			localStorage.setItem('authUser', JSON.stringify(user))
-			// TODO: fetch user
-			// dispatch(fetchUser(user.uid))
+			dispatch(fetchUser(user.uid))
 		} else {
 			dispatch(receiveLogout())
 			localStorage.removeItem('authUser')
-			// TODO: clear user
-			// dispatch(clearUserObject())
+			dispatch(clearUser())
 		}
 		dispatch(receiveVerify())
 	})
@@ -96,10 +95,9 @@ export const resetPassword = email => dispatch => {
 
 	myFirebase
 		.auth()
-		.sendPasswordResetEmail(email) // This doesn't act like a promise, what's going on?
+		.sendPasswordResetEmail(email)
 		.then(() => {
-			// TODO: Figure out why this isn't firing
-			dispatch(receiveReset)
+			dispatch(receiveReset())
 		})
 		.catch(error => {
 			console.log(error)
