@@ -15,11 +15,12 @@ import {
 export const createUser = (uid, email) => dispatch => {
 	dispatch(requestNewUser())
 
+	const initialUserState = { email, bungie: { isLinked: false } }
+
 	myFirebase
-		.firestore()
-		.collection(`user`)
-		.doc(uid)
-		.set({ email })
+		.database()
+		.ref(`user/${uid}`)
+		.set(initialUserState)
 		.then(() => {
 			dispatch(receiveNewUser({ email }))
 		})
@@ -31,26 +32,20 @@ export const createUser = (uid, email) => dispatch => {
 
 export const fetchUser = uid => dispatch => {
 	// TODO: Fetch from localstorage for faster load
-	// then fetch from firestore (if last fetch was > certain time?,) and update localstorage
+	// then fetch from database (if last fetch was > certain time?,) and update localstorage
 	dispatch(requestLoadUser())
 
 	myFirebase
-		.firestore()
-		.collection(`user`)
-		.doc(uid)
-		.get()
-		.then(doc => {
-			if (!doc.exists) {
-				console.log('No such user', doc)
-				dispatch(loadUserError('No user found'))
-			} else {
-				dispatch(receiveLoadUser(doc.data()))
-				return doc.data()
-			}
+		.database()
+		.ref(`user/${uid}`)
+		.once('value')
+		.then(snapshot => {
+			dispatch(receiveLoadUser(snapshot.val()))
+			return snapshot.val()
 		})
 		.then(value => {
 			// Do clan / group fetching here?
-			console.log(value)
+			// console.log(value)
 		})
 		.catch(error => {
 			console.log(error)

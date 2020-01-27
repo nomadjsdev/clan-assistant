@@ -6,6 +6,8 @@ import Home from 'View/Home'
 import Register from 'View/Register'
 import PasswordReset from 'View/PasswordReset'
 import Login from 'View/Login'
+import Dashboard from 'View/Dashboard'
+import Profile from 'View/Profile'
 
 import Navbar from 'Component/Navbar'
 
@@ -53,10 +55,12 @@ const App = () => {
 		<Router>
 			<Navbar />
 			<Switch>
-				<Route path="/register">{isAuthenticated ? <Redirect to="/" /> : <Register />}</Route>
-				<Route path="/passwordreset">{isAuthenticated ? <Redirect to="/" /> : <PasswordReset />}</Route>
-				<Route path="/login">{isAuthenticated ? <Redirect to="/" /> : <Login />}</Route>
-				<Route path="/">{isAuthenticated ? <Redirect to="/dashboard" /> : <Home />}</Route>
+				<Route path="/register">{!isAuthenticated ? <Register /> : <Redirect to="/" />}</Route>
+				<Route path="/passwordreset">{!isAuthenticated ? <PasswordReset /> : <Redirect to="/" />}</Route>
+				<Route path="/login">{!isAuthenticated ? <Login /> : <Redirect to="/" />}</Route>
+				<Route path="/dashboard">{isAuthenticated ? <Dashboard /> : <Redirect to="/login" />}</Route>
+				<Route path="/profile">{isAuthenticated ? <Profile /> : <Redirect to="/login" />}</Route>
+				<Route path="/">{!isAuthenticated ? <Home /> : <Redirect to="/dashboard" />}</Route>
 			</Switch>
 		</Router>
 	)

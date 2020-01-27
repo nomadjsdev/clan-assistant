@@ -24,19 +24,23 @@ const NavbarAuth = () => {
 	const dispatch = useDispatch()
 	const details = useSelector(state => state.user.details)
 
-	return (
-		<>
-			<button
-				type="button"
-				onClick={() => {
-					dispatch(logoutUser())
-				}}
-			>
-				Logout
-			</button>
-			<span>{details.email}</span>
-		</>
-	)
+	if (details) {
+		return (
+			<>
+				<button
+					type="button"
+					onClick={() => {
+						dispatch(logoutUser())
+					}}
+				>
+					Logout
+				</button>
+				<NavLink to="/profile">{details.email}</NavLink>
+			</>
+		)
+	}
+
+	return <></>
 }
 
 export default Navbar
